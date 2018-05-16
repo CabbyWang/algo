@@ -4,7 +4,9 @@
 from math import sin, cos, tan, pi, atan, sqrt
 import sys
 import click
+from pathlib import Path
 from PyQt5.QtWidgets import *
+from PyQt5 import uic
 
 
 def z_iter(F, T, D, HZ):
@@ -15,14 +17,7 @@ def z_iter(F, T, D, HZ):
         yield a
 
 
-def main():
-    F = 1
-    R = 2
-    A1 = 3
-    A2 = 3
-    A3 = 3
-    L = 4
-    D = 5
+def calculate(R, F, A1, A2, A3, L, D):
     p = 206265
     A = (A1 * 3600 + A2 * 60 + A3) / 3600
     B = L / (2 * R) * p
@@ -85,8 +80,9 @@ def main():
         x0 = temp - pow(temp, 5) / (40 * pow(R, 2) * pow(L, 2))
         y0 = pow(temp, 3) / (6 * R * L)
         # 转换坐标系
-        xi = y0 * sin(-A) - x0 * cos(-A) + zb_HZ[0]
-        yi = y0 * cos(-A) + x0 * sin(-A) + zb_HZ[1]
+        x = y0 * sin(-A) - x0 * cos(-A) + zb_HZ[0]
+        y = y0 * cos(-A) + x0 * sin(-A) + zb_HZ[1]
+        zb_3_list.append((x, y))
     # 偏角
     painjiao_list3 = [atan(y / x) * 180 / pi for x, y in zb_3_list]
     # 距离
@@ -96,27 +92,37 @@ def main():
 class CacWidget(QWidget):
 
     def __init__(self, parent=None):
-        self.setWindowTitle('缓和曲线计算程序')
+        super(CacWidget, self).__init__(parent)
+        self.ui = uic.loadUi(str(Path(__file__).parent.parent / 'ui' / 'calculate.ui'), self)
         self.set_ui()
 
     def set_ui(self):
-        main_layout = QHBoxLayout()
-        cal_groupbox = QGroupBox('输入')
-        label1 = QLabel('交点里程（F）：( K + ')
-        f_edit = QLineEdit()
-        label11 = QLabel('m)')
-        label2 = QLabel('圆曲线半径（R）')
-        r_edit = QLineEdit()
-        label22 = QLabel('(m)')
-        label3 = QLabel('转角（a）')
+        self.setWindowTitle('缓和曲线计算程序')
+        self.ui.btn_calc.clicked.connect(self.calculate)
+        self.ui.btn_clear.clicked.connect(self.clear)
 
+    def calculate(self):
+        R = self.ui.edit_R.text()
+        F = self.ui.edit_F.text()
+        A1 = self.ui.edit_A1.text()
+        A2 = self.ui.edit_A2.text()
+        A3 = self.ui.edit_A3.text()
+        L = self.ui.edit_L.text()
+        D = self.ui.edit_D.text()
+        calculate(R, F, A1, A2, A3, L, D)
 
+    def clear(self):
+        self.ui.edit_R.clear()
+        self.ui.edit_F.clear()
+        self.ui.edit_A1.clear()
+        self.ui.edit_A2.clear()
+        self.ui.edit_A3.clear()
+        self.ui.edit_L.clear()
+        self.ui.edit_D.clear()
 
 
 if __name__ == "__main__":
-    # main()
-    a = z_iter(1, 2, 3)
-    print(list(a))
-    print(list(a))
-    print(list(a))
-    print(list(a))
+    app = QApplication(sys.argv)
+    cw = CacWidget()
+    cw.show()
+    sys.exit(app.exec())

@@ -63,7 +63,7 @@ def main2(yizhi_file, weizhi_file, out_file):
         for x0, y0, z0 in ori_points:
             distance = get_distance(x, y, x0, y0)
             distances[z0] = distance
-        z = max(zip(distances.values(), distances.keys()))[1]
+        z = min(zip(distances.values(), distances.keys()))[1]
         result_dict[(x, y)] = z
     result_coords = []
     for (x, y), z in result_dict.items():

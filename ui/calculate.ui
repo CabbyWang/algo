@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>756</width>
+    <width>999</width>
     <height>442</height>
    </rect>
   </property>
@@ -305,20 +305,20 @@
        <rect>
         <x>359</x>
         <y>30</y>
-        <width>361</width>
+        <width>591</width>
         <height>371</height>
        </rect>
       </property>
       <property name="title">
        <string>输出</string>
       </property>
-      <widget class="QListWidget" name="list_widget">
+      <widget class="QTableWidget" name="table_widget">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>10</x>
          <y>20</y>
-         <width>321</width>
-         <height>341</height>
+         <width>561</width>
+         <height>351</height>
         </rect>
        </property>
       </widget>
@@ -337,7 +337,6 @@
   <tabstop>edit_D</tabstop>
   <tabstop>btn_calc</tabstop>
   <tabstop>btn_clear</tabstop>
-  <tabstop>list_widget</tabstop>
  </tabstops>
  <resources>
   <include location="C:/Users/Cabby/Desktop/x.qrc"/>

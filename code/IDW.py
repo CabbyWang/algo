@@ -44,7 +44,7 @@ def main(yizhi_file, weizhi_file, out_file):
             distances.append(distance)
             member += z0 / distance
 
-        denominator = reduce(lambda x, y: x + y, (1 / i for i in distances))       # 分母   # noqa
+        denominator = reduce(lambda x, y: x + y, (1 /(i * i) for i in distances))       # 分母   # noqa
         z = member / denominator
         result_dict[(x, y)] = z         # z坐标
     result_coords = []

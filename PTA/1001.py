@@ -10,7 +10,7 @@ def old_iter():
 
 
 if __name__ == '__main__':
-    n = input()
+    n = int(input())
     step = 0
     while n != 1:
         step += 1

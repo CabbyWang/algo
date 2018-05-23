@@ -2,4 +2,9 @@
 .idea
 
 # pyc
-.pyc
+*.pyc
+
+# pyinstaller
+dist
+build
+*.spec

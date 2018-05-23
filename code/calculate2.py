@@ -27,12 +27,12 @@ def calculate(R, F, A1, A2, A3, L, D):
     R, F, A1, A2, A3, L, D = float(R), float(F), float(A1), float(A2), float(A3), float(L), float(D)
     p = 206265
     A = (A1 * 3600 + A2 * 60 + A3) / 3600
-    B = L / (2 * R) * p
+    B = L / (2 * R) * p / 3600
     m = L / 2 - pow(L, 3) / (240 * pow(R, 2))
     P = pow(L, 2) / (24 * R)
-    T = (R + P) * m * tan(A / 2)
+    T = m + (R + P) * tan(A / 2 * pi / 180)
     l = pi * R * (A - 2 * B) / 180 + 2 * L
-    E = (R + P) * (1 / cos(A / 2)) - R
+    E = (R + P) * (1 / cos(A / 2 * pi / 180)) - R
     Q = 2 * T - L
 
     li_list = []
@@ -41,6 +41,7 @@ def calculate(R, F, A1, A2, A3, L, D):
     ## 主点里程
     li_ZH = F - T
     li_HY = li_ZH + L
+    print('A = {}, B = {}'.format(A, B))
     li_QZ = li_HY + (A / 2 - B) * pi * R / 180
     li_YH = li_HY + (A - 2 * B) * pi * R / 180
     li_HZ = li_ZH + 2 * L + (A - 2 * B) * pi * R / 180
@@ -50,9 +51,9 @@ def calculate(R, F, A1, A2, A3, L, D):
     ## 主点坐标
     zb_ZH = (0, 0)
     zb_HY = (L - pow(L, 3) / (40 * pow(R, 2)), pow(L, 2) / 6 / R)
-    zb_QZ = (R * sin(A) + m, R - cos(A / 2) * R + P)
-    zb_YH = (sin(180 - A) + m, cos(180 - A) + R + P)
-    zb_HZ = ((cos(A) + 1) * T, sin(A) * T)
+    zb_QZ = (R * sin(A / 2 * pi / 180) + m, R - cos(A / 2 * pi / 180) * R + P)
+    zb_YH = (R * sin((A - B) * pi / 180) + m, R * (1 - cos((A - B) * pi / 180)) + P)
+    zb_HZ = ((cos(A * pi / 180) + 1) * T, sin(A * pi / 180) * T)
 
     zb_list += [zb_ZH, zb_HY, zb_QZ, zb_YH, zb_HZ]
 
@@ -82,8 +83,8 @@ def calculate(R, F, A1, A2, A3, L, D):
     zb_2_list = []
     for li2 in lis_2:
         temp = 180 / (pi * R) * (li2 - F + T - L) + B
-        x = R * sin(temp) + m
-        y = R * (1 - cos(temp)) + P
+        x = R * sin(temp * pi / 180) + m
+        y = R * (1 - cos(temp * pi / 180)) + P
         zb_2_list.append((x, y))
     # 偏角
     # painjiao_list2 = [atan(y / x) * 180 / pi for x, y in zb_2_list]
@@ -98,8 +99,8 @@ def calculate(R, F, A1, A2, A3, L, D):
         x0 = temp - pow(temp, 5) / (40 * pow(R, 2) * pow(L, 2))
         y0 = pow(temp, 3) / (6 * R * L)
         # 转换坐标系
-        x = y0 * sin(-A) - x0 * cos(-A) + zb_HZ[0]
-        y = y0 * cos(-A) + x0 * sin(-A) + zb_HZ[1]
+        x = y0 * sin(-A * pi / 180) - x0 * cos(-A * pi / 180) + zb_HZ[0]
+        y = y0 * cos(-A * pi / 180) + x0 * sin(-A * pi / 180) + zb_HZ[1]
         zb_3_list.append((x, y))
     # 偏角
     # painjiao_list3 = [atan(y / x) * 180 / pi for x, y in zb_3_list]
@@ -107,10 +108,13 @@ def calculate(R, F, A1, A2, A3, L, D):
     # juli3 = [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_3_list]
     zb_list += zb_3_list
 
-    pj_list = [atan(y / x) * 180 / pi for x, y in zb_list]
-    jl_list = [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_list]
+    pj_list = [0] + [atan(y / x) * 180 / pi for x, y in zb_list if x != 0]
+    jl_list = [0] + [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_list if x != 0]
 
-    data = list(zip(li_list, zb_list, pj_list, jl_list))
+    # data = list(zip(li_list, zb_list, pj_list, jl_list))
+    data = []
+    for i in range(len(li_list)):
+        data.append((li_list[i], zb_list[i], pj_list[i], jl_list[i]))
     return data
 
 
@@ -120,7 +124,7 @@ class CacWidget(QWidget):
         super(CacWidget, self).__init__(parent)
         self.ui = uic.loadUi(str(Path(__file__).parent.parent / 'ui' / 'calculate.ui'), self)
         self.set_ui()
-        self.show_in_view([['a', 'b', 'c', 'd'], ['q', 'w', 'e', 'r']])
+        # self.show_in_view([['a', 'b', 'c', 'd'], ['q', 'w', 'e', 'r']])
 
     def set_ui(self):
         self.setWindowTitle('缓和曲线计算程序')
@@ -136,20 +140,20 @@ class CacWidget(QWidget):
         L = self.ui.edit_L.text()
         D = self.ui.edit_D.text()
         data = calculate(R, F, A1, A2, A3, L, D)
-        # self.show_in_view(data)
+        self.show_in_view(data)
         # self.show_in_view([['c', 'b', 'c', 'e'], ['q', 'w', 'e', 'r']])
 
     def show_in_view(self, data):
         table_widget = self.ui.table_widget
         table_widget.clear()
-        table = QTableWidget()
+        # table = QTableWidget()
         # table.setEditTriggers()
         table_widget.setColumnCount(4)
         table_widget.setRowCount(len(data))
         table_widget.setHorizontalHeaderLabels(['里程', '坐标', '偏角', '距离'])
         for row, row_data in enumerate(data):
             for col, value in enumerate(row_data):
-                item = QTableWidgetItem(value)
+                item = QTableWidgetItem('{}'.format(value))
                 table_widget.setItem(row, col, item)
 
     def clear(self):

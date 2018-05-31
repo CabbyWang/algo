@@ -80,7 +80,7 @@ def calculate(R, F, A1, A2, A3, D):
     data = []
     for i in range(len(li_list)):
         data.append((li_list[i], zb_list[i], pj_list[i], jl_list[i]))
-    return data
+    return data, T, L, E, Q
 
 
 class CacWidget(QWidget):
@@ -103,11 +103,11 @@ class CacWidget(QWidget):
         A2 = self.ui.edit_A2.text()
         A3 = self.ui.edit_A3.text()
         D = self.ui.edit_D.text()
-        data = calculate(R, F, A1, A2, A3, D)
-        self.show_in_view(data)
+        data, T, L, E, Q = calculate(R, F, A1, A2, A3, D)
+        self.show_in_view(data, T, L, E, Q)
         # self.show_in_view([['c', 'b', 'c', 'e'], ['q', 'w', 'e', 'r']])
 
-    def show_in_view(self, data):
+    def show_in_view(self, data, T, L, E, Q):
         table_widget = self.ui.table_widget
         table_widget.clear()
         # table = QTableWidget()
@@ -119,6 +119,12 @@ class CacWidget(QWidget):
             for col, value in enumerate(row_data):
                 item = QTableWidgetItem('{}'.format(value))
                 table_widget.setItem(row, col, item)
+
+        # other input
+        self.ui.edit_T.setText(str(T))
+        self.ui.edit_L.setText(str(L))
+        self.ui.edit_E.setText(str(E))
+        self.ui.edit_Q.setText(str(Q))
 
     def clear(self):
         self.ui.edit_R.clear()

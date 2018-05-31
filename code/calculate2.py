@@ -72,10 +72,6 @@ def calculate(R, F, A1, A2, A3, L, D):
         x = temp - pow(temp, 5) / (40 * pow(R, 2) * pow(L, 2))
         y = pow(temp, 3) / (6 * R * L)
         zb_1_list.append((x, y))
-    # 偏角
-    # painjiao_list1 = [atan(y / x) * 180 / pi for x, y in zb_1_list]
-    # 距离
-    # juli1 = [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_1_list]
     zb_list += zb_1_list
 
     # 第二段，对应lis_2
@@ -85,10 +81,6 @@ def calculate(R, F, A1, A2, A3, L, D):
         x = R * sin(temp * pi / 180) + m
         y = R * (1 - cos(temp * pi / 180)) + P
         zb_2_list.append((x, y))
-    # 偏角
-    # painjiao_list2 = [atan(y / x) * 180 / pi for x, y in zb_2_list]
-    # 距离
-    # juli2 = [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_2_list]
     zb_list += zb_2_list
 
     # 第三段, 对应lis_3
@@ -101,10 +93,6 @@ def calculate(R, F, A1, A2, A3, L, D):
         x = y0 * sin(-A * pi / 180) - x0 * cos(-A * pi / 180) + zb_HZ[0]
         y = y0 * cos(-A * pi / 180) + x0 * sin(-A * pi / 180) + zb_HZ[1]
         zb_3_list.append((x, y))
-    # 偏角
-    # painjiao_list3 = [atan(y / x) * 180 / pi for x, y in zb_3_list]
-    # 距离
-    # juli3 = [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_3_list]
     zb_list += zb_3_list
 
     pj_du_list = [0] + [atan(y / x) * 180 / pi for x, y in zb_list if x != 0]
@@ -127,7 +115,7 @@ def calculate(R, F, A1, A2, A3, L, D):
     data = []
     for i in range(len(li_list)):
         data.append((li_list[i], zb_list[i], pj_list[i], jl_list[i]))
-    return data
+    return data, B, m, p, T, l, E, Q
 
 
 class CacWidget(QWidget):
@@ -136,7 +124,6 @@ class CacWidget(QWidget):
         super(CacWidget, self).__init__(parent)
         self.ui = uic.loadUi(str(Path(__file__).parent.parent / 'ui' / 'calculate.ui'), self)
         self.set_ui()
-        # self.show_in_view([['a', 'b', 'c', 'd'], ['q', 'w', 'e', 'r']])
 
     def set_ui(self):
         self.setWindowTitle('缓和曲线计算程序')
@@ -151,15 +138,12 @@ class CacWidget(QWidget):
         A3 = self.ui.edit_A3.text()
         L = self.ui.edit_L.text()
         D = self.ui.edit_D.text()
-        data = calculate(R, F, A1, A2, A3, L, D)
-        self.show_in_view(data)
-        # self.show_in_view([['c', 'b', 'c', 'e'], ['q', 'w', 'e', 'r']])
+        data, B, m, p, T, l, E, Q = calculate(R, F, A1, A2, A3, L, D)
+        self.show_in_view(data, B, m, p, T, l, E, Q)
 
-    def show_in_view(self, data):
+    def show_in_view(self, data, B, m, p, T, l, E, Q):
         table_widget = self.ui.table_widget
         table_widget.clear()
-        # table = QTableWidget()
-        # table.setEditTriggers()
         table_widget.setColumnCount(4)
         table_widget.setRowCount(len(data))
         table_widget.setHorizontalHeaderLabels(['里程', '坐标', '偏角', '弦长'])
@@ -167,6 +151,15 @@ class CacWidget(QWidget):
             for col, value in enumerate(row_data):
                 item = QTableWidgetItem('{}'.format(value))
                 table_widget.setItem(row, col, item)
+
+        # other output
+        self.ui.edit_B.setText(str(B))
+        self.ui.edit_m.setText(str(m))
+        self.ui.edit_p.setText(str(p))
+        self.ui.edit_T.setText(str(T))
+        self.ui.edit_l.setText(str(l))
+        self.ui.edit_E.setText(str(E))
+        self.ui.edit_Q.setText(str(Q))
 
     def clear(self):
         self.ui.edit_R.clear()

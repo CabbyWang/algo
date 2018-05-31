@@ -58,21 +58,24 @@ def calculate(R, F, A1, A2, A3, D):
         x = R * sin((li - li_ZY) / R)
         y = R * (1 - cos((li - li_ZY) / R))
         zb_list.append((x, y))
-    # 偏角
-    # painjiao_list1 = [atan(y / x) * 180 / pi for x, y in zb_1_list]
-    # 距离
-    # juli1 = [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_1_list]
-    # zb_list += zb_list
 
-    pj_list = [180 / pi / R / 2 * (li - li_ZY) for li in li_list]
-    # TODO 度转度分秒 °′″
-    jl_list = ['{:.3f}'.format(2 * R * sin(pj / 2 * pi / 180)) for pj in pj_list]
+    pj_du_list = [180 / pi / R / 2 * (li - li_ZY) for li in li_list]
+
+    jl_list = ['{:.3f}'.format(2 * R * sin(pj / 2 * pi / 180)) for pj in pj_du_list]
 
     zb_list = [(float('{:.3f}'.format(x)), float('{:.3f}'.format(y))) for x, y in zb_list]
 
     li_list = ['{:.3f}'.format(i) for i in li_list]
 
-    print('li_list = {}, \nzb_list = {}, \npj_list = {}, \njl_list{}'.format(li_list, zb_list, pj_list, jl_list))
+    # TODO 度转度分秒 °′″
+    pj_list = []
+    for pj in pj_du_list:
+        miao = pj * 3600
+        du, yushu1 = miao // 3600, miao % 3600
+        fen, yushu2 = yushu1 // 60, yushu1 % 60
+        miao = yushu2
+        pj_list.append('{:.0f}°{:.0f}′{:.1f}″'.format(du, fen, miao))
+
     # data = list(zip(li_list, zb_list, pj_list, jl_list))
     data = []
     for i in range(len(li_list)):
@@ -114,7 +117,6 @@ class CacWidget(QWidget):
         table_widget.setHorizontalHeaderLabels(['里程', '坐标', '偏角', '弦长'])
         for row, row_data in enumerate(data):
             for col, value in enumerate(row_data):
-                print(value)
                 item = QTableWidgetItem('{}'.format(value))
                 table_widget.setItem(row, col, item)
 

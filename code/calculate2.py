@@ -41,7 +41,6 @@ def calculate(R, F, A1, A2, A3, L, D):
     ## 主点里程
     li_ZH = F - T
     li_HY = li_ZH + L
-    print('A = {}, B = {}'.format(A, B))
     li_QZ = li_HY + (A / 2 - B) * pi * R / 180
     li_YH = li_HY + (A - 2 * B) * pi * R / 180
     li_HZ = li_ZH + 2 * L + (A - 2 * B) * pi * R / 180
@@ -108,14 +107,23 @@ def calculate(R, F, A1, A2, A3, L, D):
     # juli3 = [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_3_list]
     zb_list += zb_3_list
 
-    pj_list = [0] + [atan(y / x) * 180 / pi for x, y in zb_list if x != 0]
+    pj_du_list = [0] + [atan(y / x) * 180 / pi for x, y in zb_list if x != 0]
+
+    # TODO 度转度分秒 °′″
+    pj_list = []
+    for pj in pj_du_list:
+        miao = pj * 3600
+        du, yushu1 = miao // 3600, miao % 3600
+        fen, yushu2 = yushu1 // 60, yushu1 % 60
+        miao = yushu2
+        pj_list.append('{:.0f}°{:.0f}′{:.1f}″'.format(du, fen, miao))
+
     jl_list = [0] + ['{:.3f}'.format(sqrt(pow(x, 2) + pow(y, 2))) for x, y in zb_list if x != 0]
 
     zb_list = [(float('{:.3f}'.format(x)), float('{:.3f}'.format(y))) for x, y in zb_list]
 
     li_list = ['{:.3f}'.format(i) for i in li_list]
 
-    # data = list(zip(li_list, zb_list, pj_list, jl_list))
     data = []
     for i in range(len(li_list)):
         data.append((li_list[i], zb_list[i], pj_list[i], jl_list[i]))

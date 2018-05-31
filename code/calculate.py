@@ -66,7 +66,11 @@ def calculate(R, F, A1, A2, A3, D):
 
     pj_list = [180 / pi / R / 2 * (li - li_ZY) for li in li_list]
     # TODO 度转度分秒 °′″
-    jl_list = [2 * R * sin(pj / 2 * pi / 180) for pj in pj_list]
+    jl_list = ['{:.3f}'.format(2 * R * sin(pj / 2 * pi / 180)) for pj in pj_list]
+
+    zb_list = [(float('{:.3f}'.format(x)), float('{:.3f}'.format(y))) for x, y in zb_list]
+
+    li_list = ['{:.3f}'.format(i) for i in li_list]
 
     print('li_list = {}, \nzb_list = {}, \npj_list = {}, \njl_list{}'.format(li_list, zb_list, pj_list, jl_list))
     # data = list(zip(li_list, zb_list, pj_list, jl_list))
@@ -107,7 +111,7 @@ class CacWidget(QWidget):
         # table.setEditTriggers()
         table_widget.setColumnCount(4)
         table_widget.setRowCount(len(data))
-        table_widget.setHorizontalHeaderLabels(['里程', '坐标', '偏角', '距离'])
+        table_widget.setHorizontalHeaderLabels(['里程', '坐标', '偏角', '弦长'])
         for row, row_data in enumerate(data):
             for col, value in enumerate(row_data):
                 print(value)

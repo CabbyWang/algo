@@ -109,7 +109,11 @@ def calculate(R, F, A1, A2, A3, L, D):
     zb_list += zb_3_list
 
     pj_list = [0] + [atan(y / x) * 180 / pi for x, y in zb_list if x != 0]
-    jl_list = [0] + [sqrt(pow(x, 2) + pow(y, 2)) for x, y in zb_list if x != 0]
+    jl_list = [0] + ['{:.3f}'.format(sqrt(pow(x, 2) + pow(y, 2))) for x, y in zb_list if x != 0]
+
+    zb_list = [(float('{:.3f}'.format(x)), float('{:.3f}'.format(y))) for x, y in zb_list]
+
+    li_list = ['{:.3f}'.format(i) for i in li_list]
 
     # data = list(zip(li_list, zb_list, pj_list, jl_list))
     data = []
@@ -150,7 +154,7 @@ class CacWidget(QWidget):
         # table.setEditTriggers()
         table_widget.setColumnCount(4)
         table_widget.setRowCount(len(data))
-        table_widget.setHorizontalHeaderLabels(['里程', '坐标', '偏角', '距离'])
+        table_widget.setHorizontalHeaderLabels(['里程', '坐标', '偏角', '弦长'])
         for row, row_data in enumerate(data):
             for col, value in enumerate(row_data):
                 item = QTableWidgetItem('{}'.format(value))

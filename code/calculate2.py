@@ -153,13 +153,13 @@ class CacWidget(QWidget):
                 table_widget.setItem(row, col, item)
 
         # other output
-        self.ui.edit_B.setText(str(B))
-        self.ui.edit_m.setText(str(m))
-        self.ui.edit_p.setText(str(p))
-        self.ui.edit_T.setText(str(T))
-        self.ui.edit_l.setText(str(l))
-        self.ui.edit_E.setText(str(E))
-        self.ui.edit_Q.setText(str(Q))
+        self.ui.edit_B.setText('{:.3f}'.format(B))
+        self.ui.edit_m.setText('{:.3f}'.format(m))
+        self.ui.edit_p.setText('{:.3f}'.format(p))
+        self.ui.edit_T.setText('{:.3f}'.format(T))
+        self.ui.edit_l.setText('{:.3f}'.format(l))
+        self.ui.edit_E.setText('{:.3f}'.format(E))
+        self.ui.edit_Q.setText('{:.3f}'.format(Q))
 
     def clear(self):
         self.ui.edit_R.clear()

@@ -121,10 +121,10 @@ class CacWidget(QWidget):
                 table_widget.setItem(row, col, item)
 
         # other input
-        self.ui.edit_T.setText(str(T))
-        self.ui.edit_L.setText(str(L))
-        self.ui.edit_E.setText(str(E))
-        self.ui.edit_Q.setText(str(Q))
+        self.ui.edit_T.setText('{:.3f}'.format(T))
+        self.ui.edit_L.setText('{:.3f}'.format(L))
+        self.ui.edit_E.setText('{:.3f}'.format(E))
+        self.ui.edit_Q.setText('{:.3f}'.format(Q))
 
     def clear(self):
         self.ui.edit_R.clear()
